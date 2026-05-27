@@ -96,6 +96,7 @@
             display: flex;
             flex-direction: column;
             gap: 9px;
+            margin-bottom: 1rem;
         }
 
         .opt {
@@ -164,6 +165,80 @@
             border-top: none;
             border-left: none;
             transform: rotate(45deg) translate(-1px, -1px);
+        }
+
+        .custom-input-wrap {
+            margin-top: 4px;
+        }
+
+        .custom-input-label {
+            font-size: 12px;
+            color: #b07a90;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #f0d0de;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #2d1a24;
+            background: #fff8fb;
+            outline: none;
+            transition: border-color 0.2s;
+            resize: none;
+        }
+
+        .custom-input:focus {
+            border-color: #c94070;
+            background: #fff;
+        }
+
+        .custom-input::placeholder {
+            color: #d4a0b5;
+        }
+
+        /* Step 3 note area */
+        .note-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .note-area {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px;
+            border: 1.5px solid #f0d0de;
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #2d1a24;
+            background: #fff8fb;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.2s;
+            line-height: 1.6;
+        }
+
+        .note-area:focus {
+            border-color: #c94070;
+            background: #fff;
+        }
+
+        .note-area::placeholder {
+            color: #d4a0b5;
+        }
+
+        .note-hint {
+            font-size: 12px;
+            color: #c9799a;
+            text-align: center;
         }
 
         .nav {
@@ -265,6 +340,28 @@
             font-weight: 500;
         }
 
+        .note-result {
+            background: #fff8fb;
+            border: 1px solid #f0d0de;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: #2d1a24;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .custom-result {
+            font-size: 13px;
+            color: #8a4060;
+            font-style: italic;
+            background: #fff5f8;
+            padding: 4px 10px;
+            border-radius: 99px;
+            border: 1px dashed #f0c0d4;
+        }
+
         .share-box {
             margin-top: 1.25rem;
             padding-top: 1.25rem;
@@ -275,9 +372,6 @@
             font-size: 13px;
             color: #b07a90;
             margin-bottom: 7px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
         .link-row {
@@ -360,29 +454,29 @@
     <div class="card">
         <div class="header">
             <h1>❤️ Only for Trang</h1>
-            <p>Chọn đáp án tùy thích, rồi chia sẻ kết quả cho anh nha!</p>
+            <p>Chọn đáp án và thêm ghi chú của em nhé!</p>
         </div>
 
-        <!-- Quiz -->
         <div id="quiz-section">
             <div class="progress-bar-wrap" id="progress-bar"></div>
-            <div class="q-label" id="q-label">Câu 1 / 2</div>
+            <div class="q-label" id="q-label"></div>
             <div class="q-text" id="q-text"></div>
-            <div class="options" id="opts"></div>
+            <div id="q-body"></div>
             <div class="nav">
                 <button class="btn" id="btn-prev" onclick="prev()">← Quay lại</button>
                 <button class="btn primary" id="btn-next" onclick="next()">Tiếp theo →</button>
             </div>
         </div>
 
-        <!-- Result -->
         <div id="result-section" class="hidden">
             <div class="result-header">
                 <div class="big">🎀</div>
-                <h2>Kết quả của Nàng</h2>
+                <h2>Kết quả của Trang</h2>
             </div>
             <div id="result-list"></div>
+            <div class="share-box">
 
+            </div>
             <button class="restart-btn" onclick="restart()">↺ Làm lại từ đầu</button>
         </div>
     </div>
@@ -390,42 +484,73 @@
     <script>
         const questions = [
             {
+                type: 'choice',
                 text: "Step 1",
                 opts: [
                     { e: "🎬", l: "Đi xem phim" },
                     { e: "🌶️", l: "Đi ăn mỳ cay Seoul" },
                     { e: "🔥", l: "Đi ăn đồ nướng" }
-                ]
+                ],
+                placeholder: "Hoặc em muốn đi đâu khác có thể điền vào đây"
             },
             {
+                type: 'choice',
                 text: "Step 2",
                 opts: [
                     { e: "🏖️", l: "Đi dạo biển" },
                     { e: "☕", l: "Đi cafe" }
-                ]
+                ],
+                placeholder: "Có idea nào hay hơn ko "
+            },
+            {
+                type: 'note',
+                text: "Step 3 ",
+                placeholder: "Nhắn gì đó thêm cho anh biết nhé... 💌"
             }
         ];
 
         let cur = 0;
-        let answers = questions.map(() => new Set());
+        let answers = questions.map(q => q.type === 'choice' ? new Set() : '');
+        let customs = questions.map(() => '');
 
         function loadQ() {
             const q = questions[cur];
             document.getElementById('q-label').textContent = `Câu ${cur + 1} / ${questions.length}`;
             document.getElementById('q-text').textContent = q.text;
 
-            const grid = document.getElementById('opts');
-            grid.innerHTML = '';
-            q.opts.forEach((o, i) => {
-                const d = document.createElement('div');
-                d.className = 'opt' + (answers[cur].has(i) ? ' selected' : '');
-                d.innerHTML = `<span class="emoji">${o.e}</span><span class="lbl">${o.l}</span><span class="chk"></span>`;
-                d.onclick = () => {
-                    if (answers[cur].has(i)) { answers[cur].delete(i); d.classList.remove('selected'); }
-                    else { answers[cur].add(i); d.classList.add('selected'); }
-                };
-                grid.appendChild(d);
-            });
+            const body = document.getElementById('q-body');
+            body.innerHTML = '';
+
+            if (q.type === 'choice') {
+                const optsDiv = document.createElement('div');
+                optsDiv.className = 'options';
+                q.opts.forEach((o, i) => {
+                    const d = document.createElement('div');
+                    d.className = 'opt' + (answers[cur].has(i) ? ' selected' : '');
+                    d.innerHTML = `<span class="emoji">${o.e}</span><span class="lbl">${o.l}</span><span class="chk"></span>`;
+                    d.onclick = () => {
+                        if (answers[cur].has(i)) { answers[cur].delete(i); d.classList.remove('selected'); }
+                        else { answers[cur].add(i); d.classList.add('selected'); }
+                    };
+                    optsDiv.appendChild(d);
+                });
+                body.appendChild(optsDiv);
+
+                const customWrap = document.createElement('div');
+                customWrap.className = 'custom-input-wrap';
+                customWrap.innerHTML = `<div class="custom-input-label">✏️ Hoặc tự điền thêm</div>  
+      <textarea class="custom-input" rows="2" placeholder="${q.placeholder}" id="custom-text">${customs[cur]}</textarea>`;
+                body.appendChild(customWrap);
+                document.getElementById('custom-text').addEventListener('input', e => { customs[cur] = e.target.value; });
+
+            } else if (q.type === 'note') {
+                const noteWrap = document.createElement('div');
+                noteWrap.className = 'note-wrap';
+                noteWrap.innerHTML = `<textarea class="note-area" placeholder="${q.placeholder}" id="note-text">${answers[cur]}</textarea>
+      <div class="note-hint">💬 Viết bất cứ điều gì em muốn nhắn!</div>`;
+                body.appendChild(noteWrap);
+                document.getElementById('note-text').addEventListener('input', e => { answers[cur] = e.target.value; });
+            }
 
             const bar = document.getElementById('progress-bar');
             bar.innerHTML = '';
@@ -452,19 +577,35 @@
 
             const list = document.getElementById('result-list');
             list.innerHTML = '';
+
             questions.forEach((q, qi) => {
                 const div = document.createElement('div');
                 div.className = 'result-item';
-                const sel = [...answers[qi]];
-                const tagsHtml = sel.length === 0
-                    ? '<span style="color:#b07a90;font-size:13px">Chưa chọn</span>'
-                    : sel.map(i => `<span class="tag">${q.opts[i].e} ${q.opts[i].l}</span>`).join('');
-                div.innerHTML = `<div class="rq">${q.text}</div><div class="tags">${tagsHtml}</div>`;
+
+                if (q.type === 'choice') {
+                    const sel = [...answers[qi]];
+                    let tagsHtml = sel.length === 0
+                        ? ''
+                        : sel.map(i => `<span class="tag">${q.opts[i].e} ${q.opts[i].l}</span>`).join('');
+                    if (customs[qi].trim()) {
+                        tagsHtml += `<span class="custom-result">✏️ ${customs[qi].trim()}</span>`;
+                    }
+                    if (!tagsHtml) tagsHtml = '<span style="color:#b07a90;font-size:13px">Chưa chọn</span>';
+                    div.innerHTML = `<div class="rq">${q.text}</div><div class="tags">${tagsHtml}</div>`;
+                } else {
+                    const noteVal = answers[qi].trim();
+                    div.innerHTML = `<div class="rq">${q.text}</div>
+        <div class="note-result">${noteVal || '<span style="color:#d4a0b5">Không có ghi chú</span>'}</div>`;
+                }
+
                 list.appendChild(div);
             });
 
-            const encoded = answers.map(s => [...s].join(',')).join('|');
-            const url = location.href.split('?')[0] + '?r=' + encodeURIComponent(encoded);
+            const enc = answers.map((a, i) => {
+                if (questions[i].type === 'choice') return [...a].join(',') + '|c|' + encodeURIComponent(customs[i]);
+                return encodeURIComponent(a);
+            }).join('||');
+            const url = location.href.split('?')[0] + '?r=' + encodeURIComponent(enc);
             document.getElementById('share-link').value = url;
         }
 
@@ -481,7 +622,8 @@
 
         function restart() {
             cur = 0;
-            answers = questions.map(() => new Set());
+            answers = questions.map(q => q.type === 'choice' ? new Set() : '');
+            customs = questions.map(() => '');
             document.getElementById('result-section').classList.add('hidden');
             document.getElementById('quiz-section').classList.remove('hidden');
             loadQ();
@@ -491,8 +633,16 @@
             const r = new URLSearchParams(location.search).get('r');
             if (!r) return false;
             try {
-                decodeURIComponent(r).split('|').forEach((p, i) => {
-                    if (p && i < answers.length) p.split(',').forEach(v => { if (v !== '') answers[i].add(+v); });
+                const parts = decodeURIComponent(r).split('||');
+                parts.forEach((p, i) => {
+                    if (i >= questions.length) return;
+                    if (questions[i].type === 'choice') {
+                        const segments = p.split('|c|');
+                        if (segments[0]) segments[0].split(',').forEach(v => { if (v !== '') answers[i].add(+v); });
+                        if (segments[1]) customs[i] = decodeURIComponent(segments[1]);
+                    } else {
+                        answers[i] = decodeURIComponent(p);
+                    }
                 });
                 showResult(); return true;
             } catch (e) { return false; }
