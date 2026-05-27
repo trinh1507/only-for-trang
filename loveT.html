@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>❤️ Only for Trang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: #fdf6f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 32px rgba(220, 80, 120, 0.10);
+            padding: 2rem 2rem 1.75rem;
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #c94070;
+            letter-spacing: -0.01em;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #b07a90;
+            margin-top: 5px;
+        }
+
+        .progress-bar-wrap {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar-seg {
+            flex: 1;
+            height: 4px;
+            border-radius: 99px;
+            background: #f3d6e4;
+            transition: background 0.3s;
+        }
+
+        .progress-bar-seg.active {
+            background: #e8749a;
+        }
+
+        .progress-bar-seg.done {
+            background: #c94070;
+        }
+
+        .q-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #c9799a;
+            margin-bottom: 8px;
+        }
+
+        .q-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2d1a24;
+            margin-bottom: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .opt {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border: 1.5px solid #f0d0de;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #fff;
+            transition: border-color 0.15s, background 0.15s, transform 0.1s;
+            user-select: none;
+        }
+
+        .opt:hover {
+            background: #fff5f8;
+            border-color: #e8749a;
+            transform: translateX(2px);
+        }
+
+        .opt.selected {
+            background: #fff0f5;
+            border-color: #c94070;
+        }
+
+        .opt .emoji {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .opt .lbl {
+            flex: 1;
+            font-size: 15px;
+            color: #2d1a24;
+            font-weight: 500;
+        }
+
+        .opt.selected .lbl {
+            color: #c94070;
+        }
+
+        .opt .chk {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 1.5px solid #e0b8ca;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .opt.selected .chk {
+            background: #c94070;
+            border-color: #c94070;
+        }
+
+        .opt.selected .chk::after {
+            content: '';
+            display: block;
+            width: 5px;
+            height: 9px;
+            border: 2px solid #fff;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg) translate(-1px, -1px);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 9px 22px;
+            border-radius: 10px;
+            border: 1.5px solid #e0b8ca;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #fff;
+            color: #c94070;
+            transition: background 0.15s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: #fff0f5;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn.primary {
+            background: #c94070;
+            border-color: #c94070;
+            color: #fff;
+        }
+
+        .btn.primary:hover {
+            background: #a8305a;
+            border-color: #a8305a;
+        }
+
+        /* Result */
+        .result-header {
+            text-align: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .result-header .big {
+            font-size: 36px;
+        }
+
+        .result-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #c94070;
+            margin-top: 6px;
+        }
+
+        .result-header p {
+            font-size: 13px;
+            color: #b07a90;
+            margin-top: 4px;
+        }
+
+        .result-item {
+            margin-bottom: 1.1rem;
+        }
+
+        .result-item .rq {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #c9799a;
+            margin-bottom: 6px;
+        }
+
+        .result-item .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: #fff0f5;
+            color: #c94070;
+            border: 1px solid #f0c0d4;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .share-box {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #f3d6e4;
+        }
+
+        .share-box .slabel {
+            font-size: 13px;
+            color: #b07a90;
+            margin-bottom: 7px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .link-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .link-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1.5px solid #f0d0de;
+            border-radius: 10px;
+            font-size: 12px;
+            background: #fff8fb;
+            color: #8a4060;
+            outline: none;
+            font-family: monospace;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #e0b8ca;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+            color: #c94070;
+            font-weight: 600;
+            white-space: nowrap;
+            font-family: inherit;
+            transition: background 0.15s;
+        }
+
+        .copy-btn:hover {
+            background: #fff0f5;
+        }
+
+        .copy-btn.copied {
+            background: #f0fff4;
+            border-color: #6abf7a;
+            color: #2d7a3a;
+        }
+
+        .restart-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1.5px solid #f0d0de;
+            font-size: 14px;
+            cursor: pointer;
+            background: #fff8fb;
+            color: #c94070;
+            font-weight: 500;
+            font-family: inherit;
+            transition: background 0.15s;
+        }
+
+        .restart-btn:hover {
+            background: #fff0f5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="header">
+            <h1>❤️ Only for Trang</h1>
+            <p>Chọn đáp án tùy thích, rồi chia sẻ kết quả cho anh nha!</p>
+        </div>
+
+        <!-- Quiz -->
+        <div id="quiz-section">
+            <div class="progress-bar-wrap" id="progress-bar"></div>
+            <div class="q-label" id="q-label">Câu 1 / 2</div>
+            <div class="q-text" id="q-text"></div>
+            <div class="options" id="opts"></div>
+            <div class="nav">
+                <button class="btn" id="btn-prev" onclick="prev()">← Quay lại</button>
+                <button class="btn primary" id="btn-next" onclick="next()">Tiếp theo →</button>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-section" class="hidden">
+            <div class="result-header">
+                <div class="big">🎀</div>
+                <h2>Kết quả của Trang</h2>
+            </div>
+            <div id="result-list"></div>
+
+            <button class="restart-btn" onclick="restart()">↺ Làm lại từ đầu</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                text: "Step 1",
+                opts: [
+                    { e: "🎬", l: "Đi xem phim" },
+                    { e: "🌶️", l: "Đi ăn mỳ cay Seoul" },
+                    { e: "🔥", l: "Đi ăn đồ nướng" }
+                ]
+            },
+            {
+                text: "Step 2",
+                opts: [
+                    { e: "🏖️", l: "Đi dạo biển" },
+                    { e: "☕", l: "Đi cafe" }
+                ]
+            }
+        ];
+
+        let cur = 0;
+        let answers = questions.map(() => new Set());
+
+        function loadQ() {
+            const q = questions[cur];
+            document.getElementById('q-label').textContent = `Câu ${cur + 1} / ${questions.length}`;
+            document.getElementById('q-text').textContent = q.text;
+
+            const grid = document.getElementById('opts');
+            grid.innerHTML = '';
+            q.opts.forEach((o, i) => {
+                const d = document.createElement('div');
+                d.className = 'opt' + (answers[cur].has(i) ? ' selected' : '');
+                d.innerHTML = `<span class="emoji">${o.e}</span><span class="lbl">${o.l}</span><span class="chk"></span>`;
+                d.onclick = () => {
+                    if (answers[cur].has(i)) { answers[cur].delete(i); d.classList.remove('selected'); }
+                    else { answers[cur].add(i); d.classList.add('selected'); }
+                };
+                grid.appendChild(d);
+            });
+
+            const bar = document.getElementById('progress-bar');
+            bar.innerHTML = '';
+            questions.forEach((_, i) => {
+                const s = document.createElement('div');
+                s.className = 'progress-bar-seg' + (i === cur ? ' active' : i < cur ? ' done' : '');
+                bar.appendChild(s);
+            });
+
+            document.getElementById('btn-prev').disabled = cur === 0;
+            document.getElementById('btn-next').textContent = cur === questions.length - 1 ? 'Xem kết quả ✓' : 'Tiếp theo →';
+        }
+
+        function next() {
+            if (cur < questions.length - 1) { cur++; loadQ(); }
+            else showResult();
+        }
+
+        function prev() { if (cur > 0) { cur--; loadQ(); } }
+
+        function showResult() {
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            const list = document.getElementById('result-list');
+            list.innerHTML = '';
+            questions.forEach((q, qi) => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                const sel = [...answers[qi]];
+                const tagsHtml = sel.length === 0
+                    ? '<span style="color:#b07a90;font-size:13px">Chưa chọn</span>'
+                    : sel.map(i => `<span class="tag">${q.opts[i].e} ${q.opts[i].l}</span>`).join('');
+                div.innerHTML = `<div class="rq">${q.text}</div><div class="tags">${tagsHtml}</div>`;
+                list.appendChild(div);
+            });
+
+            const encoded = answers.map(s => [...s].join(',')).join('|');
+            const url = location.href.split('?')[0] + '?r=' + encodeURIComponent(encoded);
+            document.getElementById('share-link').value = url;
+        }
+
+        function copyLink() {
+            const val = document.getElementById('share-link').value;
+            navigator.clipboard.writeText(val).catch(() => {
+                const i = document.getElementById('share-link'); i.select(); document.execCommand('copy');
+            });
+            const btn = document.getElementById('copy-btn');
+            btn.textContent = '✓ Đã sao chép!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Sao chép'; btn.classList.remove('copied'); }, 2000);
+        }
+
+        function restart() {
+            cur = 0;
+            answers = questions.map(() => new Set());
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            loadQ();
+        }
+
+        function loadFromUrl() {
+            const r = new URLSearchParams(location.search).get('r');
+            if (!r) return false;
+            try {
+                decodeURIComponent(r).split('|').forEach((p, i) => {
+                    if (p && i < answers.length) p.split(',').forEach(v => { if (v !== '') answers[i].add(+v); });
+                });
+                showResult(); return true;
+            } catch (e) { return false; }
+        }
+
+        loadFromUrl() || loadQ();
+    </script>
+</body>
+
+</html>
